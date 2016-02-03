@@ -7,6 +7,7 @@ var path = require('path');
 var webpack = require('webpack');
 var CopyWebpackPlugin  = require('copy-webpack-plugin');
 var HtmlWebpackPlugin  = require('html-webpack-plugin');
+var ExtractTextPlugin = require("extract-text-webpack-plugin");
 var ENV = process.env.ENV = process.env.NODE_ENV = 'development';
 
 var metadata = {
@@ -63,6 +64,12 @@ module.exports = {
       // Support for CSS as raw text
       { test: /\.css$/,   loader: 'raw-loader' },
 
+      // Support for SASS as raw text
+      {
+        test: /\.sass$/,
+        loader: ExtractTextPlugin.extract('css?sourceMap!sass?sourceMap')
+      },
+
       // support for .html as raw text
       { test: /\.html$/,  loader: 'raw-loader' }
 
@@ -70,8 +77,14 @@ module.exports = {
     ]
   },
 
+  // https://github.com/jtangelder/sass-loader
+  sassLoader: {
+    indentedSyntax: true
+  },
+
   plugins: [
     new webpack.optimize.OccurenceOrderPlugin(true),
+    new ExtractTextPlugin('[name].css'),
     new webpack.optimize.CommonsChunkPlugin({ name: 'polyfills', filename: 'polyfills.bundle.js', minChunks: Infinity }),
     // static assets
     new CopyWebpackPlugin([ { from: 'src/assets', to: 'assets' } ]),

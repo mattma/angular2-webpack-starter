@@ -20,6 +20,7 @@ var WebpackMd5Hash    = require('webpack-md5-hash');
 var ENV = process.env.NODE_ENV = process.env.ENV = 'production';
 var HOST = process.env.HOST || 'localhost';
 var PORT = process.env.PORT || 8080;
+var ExtractTextPlugin = require("extract-text-webpack-plugin");
 
 var metadata = {
   title: 'Angular2 Webpack Starter by @gdi2990 from @AngularClass',
@@ -102,6 +103,11 @@ module.exports = {
       // Support for CSS as raw text
       { test: /\.css$/,   loader: 'raw-loader' },
 
+      {
+        test: /\.sass$/,
+        loader: ExtractTextPlugin.extract('css!sass')
+      },
+
       // support for .html as raw text
       { test: /\.html$/,  loader: 'raw-loader' }
 
@@ -109,9 +115,14 @@ module.exports = {
     ]
   },
 
+  sassLoader: {
+    indentedSyntax: true
+  },
+
   plugins: [
     new WebpackMd5Hash(),
     new DedupePlugin(),
+    new ExtractTextPlugin('[name].[chunkhash].bundle.css'),
     new OccurenceOrderPlugin(true),
     new CommonsChunkPlugin({
       name: 'polyfills',
